@@ -7,14 +7,16 @@ from utils.functions_file import make_valid_key,extract_from_sting
 
 load_dotenv()
 
+password = os.getenv("ARANGO_PASS")
+
 '''api_key_id = os.getenv("ARANGO_API_KEY_ID")
 secret_key = os.getenv("ARANGO_API_SECRET_KEY")
 HOST = "https://e1d9e4e87c7e.arangodb.cloud:8529"'''
-password = os.getenv("ARANGO_PASS2")
+'''password = os.getenv("ARANGO_PASS2")
 
 # Set up the client with your API key
 
-"""import base64
+import base64
 
 encodedCA = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMrakNDQWVLZ0F3SUJBZ0lSQU5WbkJBNG04MGFac0tXVnhtRVZCZXd3RFFZSktvWklodmNOQVFFTEJRQXcKSmpFUk1BOEdBMVVFQ2hNSVFYSmhibWR2UkVJeEVUQVBCZ05WQkFNVENFRnlZVzVuYjBSQ01CNFhEVEl3TVRFeQpPREUxTURBeU5Wb1hEVEkxTVRFeU56RTFNREF5TlZvd0pqRVJNQThHQTFVRUNoTUlRWEpoYm1kdlJFSXhFVEFQCkJnTlZCQU1UQ0VGeVlXNW5iMFJDTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEKemFRS2JwWnh5SWFMK0YyV1BzU3ZlWStCMlNDVzlPbXpacFMzUmk5a1N3VTUzeWJYeUd4RHRLcXhWZytzTFZIUwo5MzlXSlpDenRNUkFQeCtWRUN3aEF3VEhLNmsvUlJJOTFzMkFnb2ExYUNDS1dhMm9KKzFVSmYyRzZaL01iVzVhCjBVblRzZ250Ukt2T3k1N1l1dFUrRm51V3FuN3plYklNWXFjWVpWWEppcUtBZkw0emhMSEFnN3FlMFFzalo0eVQKVFZSS1N5a0cvdjdOY2EzVmoxNWpqbXJQYWhybjBSZkVaWnJjN1F0K2JPVDhsM3dpdUk0NFJjQ0RTTnRFSzlweAphTjRSOU1LWW45YnNWSDJsQlFuclVBZTMxeXZOb0xSM3pFcnFMZVE2WXZBcHllblorV09ScFEyZXpveFA5eW84ClVsMm9vWkgwRHRYSmttN0hhV1BaYXdJREFRQUJveU13SVRBT0JnTlZIUThCQWY4RUJBTUNBcVF3RHdZRFZSMFQKQVFIL0JBVXdBd0VCL3pBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQXhSOWw2NURZemhkeXE2R2NOd094cGR1UwpZRm44clRWeHpPRlRsRHVyNmgyaHR3emVNVG5YYzRqRmptR2ttS1Jha3dqUWVaN0owRDBwbm54WnBHK2VLN1d0ClVvNEdoMXFYVlNDcDlOdzhrWnRNZ0JGbnB1TmFHVGlDZUZraVMzWk14R2trTUpUYUtqbjBtSGgvbDYxUWZZWW4KOEZTMTFMZHQ3SE5DOGlHQXNWTWtDL0JJQk5pQ29XM0E1WUJtcmROVVVyeVBzdGJQdTZnN3dSOEhrM1RCbmlubAptcWJUMHd5bXVJNkx3YjdlbGF4Z2dIWWlPamg3OXpUaWZJUWEvZjBjRTJFSnBFMkROWGRCbHB3c1dXMTdsOUtDCmVTOVVoYUI1MkFSN2VaU25oaXlsVjFLUkxCeTBZa3RJQ1ZvNzZHckJZZE5Ma1ZseEdGZ3ByRVpQQTdVSWt3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
 try:
@@ -23,7 +25,7 @@ try:
         f.write(file_content.decode("utf-8"))
 except Exception as e:
     print(str(e))
-    exit(1)"""
+    exit(1)
 
 client = ArangoClient(
     hosts="https://8002ef9dab5a.arangodb.cloud:18529", verify_override="cert_file.crt"
@@ -34,8 +36,29 @@ db = client.db("stigflow", username="shahar", password=password)
 # Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
 # To achieve the best possible availability, your client application has to handle
 # connection failures by retrying operations if needed.
-print("ArangoDB is on")
+print("ArangoDB is on")'''
 
+import base64
+
+encodedCA = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURHVENDQWdHZ0F3SUJBZ0lSQUxMNGVRcE9vOTdFeXhxSzVhZk9UVFF3RFFZSktvWklodmNOQVFFTEJRQXcKSmpFUk1BOEdBMVVFQ2hNSVFYSmhibWR2UkVJeEVUQVBCZ05WQkFNVENFRnlZVzVuYjBSQ01CNFhEVEl6TURFeApOVEU1TkRNd04xb1hEVEk0TURFeE5ERTVORE13TjFvd0pqRVJNQThHQTFVRUNoTUlRWEpoYm1kdlJFSXhFVEFQCkJnTlZCQU1UQ0VGeVlXNW5iMFJDTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEKbGhRUEVaSUE2d2JLZTN0d2R4V3FVdUwzclFUSHlvdHIyMnVRN2oxbnJ5d3lCUjRlRDhpTm5pNmVvRERIclVWagpYdlR6M3l1aUFLeDFDenNjblIxVVhTNGdGbGhCS09PVHFkTS9DQTZ5bkNpK3ZHTk9qbEh4K0NwQ0xYeEpkeHh3CmZZdWkzNk1LOG5EWHVEelRyNHRkclRZNGcwaitScGl2RE1lb0grTVRNODVDNy81OHowdzFQNGRWZzRWWkcweGIKTGY2S0J5NlM1RDRqRUlXdXh6TWFsSjRUWnZZdXJWeUYvUzdvcU1VOVJhaWdnaC9uQUI0NFJ1WjZYbHdtZ1BNVgpWS3lpSWNyM0tsV3ZiMkxEbC9KaFhUVVQzUE9Hajd1c1NYU0Voajk2dStFVTJZZ2xGUnd1a3ZUaFBGZFZXMjhYCnIzQm9vREFDQktybTgyWWVVVys1WndJREFRQUJvMEl3UURBT0JnTlZIUThCQWY4RUJBTUNBcVF3RHdZRFZSMFQKQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVVpIcTI5VVA4QjM0RytpaHhPWjJ4cmcvUWRnNHdEUVlKS29aSQpodmNOQVFFTEJRQURnZ0VCQUdLWGt4L2xZMlpPMk5ocGk4b0F0TzhxNFd4K0hDWVV3MUZJN3FBNnZUSzRxL1pUCnpGK0VQK253c2V1WlNHYkQwY0VBQ1B4NC9EVjZPQk1ibC9NSS9kRSswdWZKWm1NbytLOHhHcTZLaHF3UlplcTUKdW02VmxxSVo0QngrQ1pwdzdQRzU1bHh3cWxIOEczNkwzYzdXRk1zdnI3bDFnQUZDTXN1bExIMmRBOUUvNWRNKwphelJoY21meEtXV05pcEJOdXlUeW0rb1puWHcxb1M5bFU2WlBNNzZaMmVFbnhGWXh4MFFEZGpqRzJFb25zSE1oCmh1TWVLd1NibG4rdGFWZFovZzdYZ25LVTNOSnRDamF3NW5uK0c4NS84RG41WTV6R000SjdJMlZSb2xIMkxVR0UKUmQ4VC90NzJaVFVCd05nSSs4SFVFRTRRb1R3djIzV0wzOFI0c3pjPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+try:
+    file_content = base64.b64decode(encodedCA)
+    with open("cert_file.crt", "w+") as f:
+        f.write(file_content.decode("utf-8"))
+except Exception as e:
+    print(str(e))
+    exit(1)
+
+client = ArangoClient(
+    hosts="https://3abd5a0b804c.arangodb.cloud:18529", verify_override="cert_file.crt"
+)
+
+db = client.db("stigflow", username="root", password=password)
+
+# Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
+# To achieve the best possible availability, your client application has to handle
+# connection failures by retrying operations if needed.
+print("ArangoDB:", db.version())
 
 #Calculate message score by all or single emoji, and single role. message_id = int/str, role = str, guild = valid str, eomoji ="emoji"
 def intersect_logic(lists):
@@ -56,7 +79,7 @@ async def calculate_message_emoji_role_score(message_key,role,emoji,guild):
     
         
 def count_makers_by_roles(message_key,role,guild):
-    aql = "WITH makers FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges FILTER INTERSECTION(@role,v.Discord_roles."+make_valid_key(guild)+") RETURN DISTINCT v._key"
+    aql = "WITH messages, makers FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges FILTER INTERSECTION(@role,v.Discord_roles."+make_valid_key(guild)+") RETURN DISTINCT v._key"
     bind_vars={
             
             "message_id":"messages/"+str(message_key),
@@ -361,5 +384,27 @@ results = db.aql.execute(aql,bind_vars={"emoji":emoji})
 
 for doc in results:
     print(doc)"""
+
+def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action:str,status:int):
+    flow = {
+        "_key":make_valid_key(str(key)),
+        "reactions":reactions,
+        "threshold":threshold,
+        "group":{
+        "Guild":make_valid_key(guild),
+        "roles":roles
+        },
+        "action":action,
+        "Status":status
+
+    }
+    
+    upsert(
+        col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
+    )
+
+"""upsert_flow(
+    key="airtable_k",reactions=['all'],threshold=0,guild="Common Sense [makers]",roles=["Maker"],status=1,action='A_K'
+)"""
 
 
