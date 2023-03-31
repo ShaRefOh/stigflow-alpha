@@ -7,12 +7,10 @@ from utils.functions_file import make_valid_key,extract_from_sting
 
 load_dotenv()
 
-password = os.getenv("ARANGO_PASS")
-
 '''api_key_id = os.getenv("ARANGO_API_KEY_ID")
 secret_key = os.getenv("ARANGO_API_SECRET_KEY")
 HOST = "https://e1d9e4e87c7e.arangodb.cloud:8529"'''
-'''password = os.getenv("ARANGO_PASS2")
+password = os.getenv("ARANGO_PASS2")
 
 # Set up the client with your API key
 
@@ -36,29 +34,8 @@ db = client.db("stigflow", username="shahar", password=password)
 # Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
 # To achieve the best possible availability, your client application has to handle
 # connection failures by retrying operations if needed.
-print("ArangoDB is on")'''
+print("ArangoDB is on")
 
-import base64
-
-encodedCA = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURHVENDQWdHZ0F3SUJBZ0lSQUxMNGVRcE9vOTdFeXhxSzVhZk9UVFF3RFFZSktvWklodmNOQVFFTEJRQXcKSmpFUk1BOEdBMVVFQ2hNSVFYSmhibWR2UkVJeEVUQVBCZ05WQkFNVENFRnlZVzVuYjBSQ01CNFhEVEl6TURFeApOVEU1TkRNd04xb1hEVEk0TURFeE5ERTVORE13TjFvd0pqRVJNQThHQTFVRUNoTUlRWEpoYm1kdlJFSXhFVEFQCkJnTlZCQU1UQ0VGeVlXNW5iMFJDTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEKbGhRUEVaSUE2d2JLZTN0d2R4V3FVdUwzclFUSHlvdHIyMnVRN2oxbnJ5d3lCUjRlRDhpTm5pNmVvRERIclVWagpYdlR6M3l1aUFLeDFDenNjblIxVVhTNGdGbGhCS09PVHFkTS9DQTZ5bkNpK3ZHTk9qbEh4K0NwQ0xYeEpkeHh3CmZZdWkzNk1LOG5EWHVEelRyNHRkclRZNGcwaitScGl2RE1lb0grTVRNODVDNy81OHowdzFQNGRWZzRWWkcweGIKTGY2S0J5NlM1RDRqRUlXdXh6TWFsSjRUWnZZdXJWeUYvUzdvcU1VOVJhaWdnaC9uQUI0NFJ1WjZYbHdtZ1BNVgpWS3lpSWNyM0tsV3ZiMkxEbC9KaFhUVVQzUE9Hajd1c1NYU0Voajk2dStFVTJZZ2xGUnd1a3ZUaFBGZFZXMjhYCnIzQm9vREFDQktybTgyWWVVVys1WndJREFRQUJvMEl3UURBT0JnTlZIUThCQWY4RUJBTUNBcVF3RHdZRFZSMFQKQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVVpIcTI5VVA4QjM0RytpaHhPWjJ4cmcvUWRnNHdEUVlKS29aSQpodmNOQVFFTEJRQURnZ0VCQUdLWGt4L2xZMlpPMk5ocGk4b0F0TzhxNFd4K0hDWVV3MUZJN3FBNnZUSzRxL1pUCnpGK0VQK253c2V1WlNHYkQwY0VBQ1B4NC9EVjZPQk1ibC9NSS9kRSswdWZKWm1NbytLOHhHcTZLaHF3UlplcTUKdW02VmxxSVo0QngrQ1pwdzdQRzU1bHh3cWxIOEczNkwzYzdXRk1zdnI3bDFnQUZDTXN1bExIMmRBOUUvNWRNKwphelJoY21meEtXV05pcEJOdXlUeW0rb1puWHcxb1M5bFU2WlBNNzZaMmVFbnhGWXh4MFFEZGpqRzJFb25zSE1oCmh1TWVLd1NibG4rdGFWZFovZzdYZ25LVTNOSnRDamF3NW5uK0c4NS84RG41WTV6R000SjdJMlZSb2xIMkxVR0UKUmQ4VC90NzJaVFVCd05nSSs4SFVFRTRRb1R3djIzV0wzOFI0c3pjPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
-try:
-    file_content = base64.b64decode(encodedCA)
-    with open("cert_file.crt", "w+") as f:
-        f.write(file_content.decode("utf-8"))
-except Exception as e:
-    print(str(e))
-    exit(1)
-
-client = ArangoClient(
-    hosts="https://3abd5a0b804c.arangodb.cloud:18529", verify_override="cert_file.crt"
-)
-
-db = client.db("stigflow", username="root", password=password)
-
-# Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
-# To achieve the best possible availability, your client application has to handle
-# connection failures by retrying operations if needed.
-print("ArangoDB:", db.version())
 
 #Calculate message score by all or single emoji, and single role. message_id = int/str, role = str, guild = valid str, eomoji ="emoji"
 def intersect_logic(lists):
@@ -79,6 +56,7 @@ async def calculate_message_emoji_role_score(message_key,role,emoji,guild):
     
         
 def count_makers_by_roles(message_key,role,guild):
+    print(f"{'argumets, message_key='}{message_key},{'role='}{role},{'guild='}{guild}")
     aql = "WITH messages, makers FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges FILTER INTERSECTION(@role,v.Discord_roles."+make_valid_key(guild)+") RETURN DISTINCT v._key"
     bind_vars={
             
@@ -88,13 +66,13 @@ def count_makers_by_roles(message_key,role,guild):
             }
     print(bind_vars)
     print(aql)
-    try:
-        id_list_roles = list(db.aql.execute(aql,bind_vars=bind_vars))
-        print(f"{'got  the list '}{id_list_roles}")
-        return id_list_roles
-    except:
-        print("bad input")
-        return "bad input"
+    #try:
+    id_list_roles = list(db.aql.execute(aql,bind_vars=bind_vars))
+    print(f"{'got  the list '}{id_list_roles}")
+    return id_list_roles
+    #except:
+        #print("bad input")
+        #return "bad input"
     
         
 def count_makers_by_emoji(message_key,emoji):
@@ -207,7 +185,7 @@ def calculate_message_emoji_group_score(emojis,group,message_id:str):
         
 #fech convo thread
 async def fetch_convo(message_key):
-    aql = "FOR v,e,p IN 1..3 ANY @message refEdges FILTER e.Type == 'Reply' RETURN DISTINCT v"
+    aql = "FOR v,e,p IN 1..100 ANY @message refEdges FILTER e.Type == 'Reply' RETURN DISTINCT v"
     query = db.aql.execute(aql,bind_vars={"message":'messages/'+str(message_key)})
     result = [ doc for doc in query]
     for doc in result:
@@ -384,7 +362,6 @@ results = db.aql.execute(aql,bind_vars={"emoji":emoji})
 
 for doc in results:
     print(doc)"""
-
 def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action:str,status:int):
     flow = {
         "_key":make_valid_key(str(key)),
@@ -403,8 +380,8 @@ def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action
         col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
     )
 
-"""upsert_flow(
+'''upsert_flow(
     key="airtable_k",reactions=['all'],threshold=0,guild="Common Sense [makers]",roles=["Maker"],status=1,action='A_K'
-)"""
+)'''
 
 
