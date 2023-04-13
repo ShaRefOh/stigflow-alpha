@@ -35,7 +35,9 @@ db = client.db("stigflow", username="shahar", password=password)
 # To achieve the best possible availability, your client application has to handle
 # connection failures by retrying operations if needed.
 print("ArangoDB is on")
-
+testing = db.collection("testing")
+for doc in testing:
+    print(doc)
 #testing permissions
 doc = {"identifier":str(time.time())}
 db.collection("testing").insert(doc)
