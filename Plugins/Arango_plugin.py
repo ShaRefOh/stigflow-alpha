@@ -34,7 +34,8 @@ db = client.db("stigflow", username="shahar", password=password)
 # Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
 # To achieve the best possible availability, your client application has to handle
 # connection failures by retrying operations if needed.
-print("ArangoDB is on")
+print("ArangoDB:", db.version())
+
 testing = db.collection("testing")
 for doc in testing:
     print(doc)
