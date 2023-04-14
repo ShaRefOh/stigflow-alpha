@@ -37,6 +37,7 @@ db = client.db("stigflow", username="shahar", password=password)
 print("ArangoDB:", db.version)
 
 testing = db.collection("testing")
+print("fetched collection yes yes")
 for doc in testing:
     print(doc)
 #testing permissions
