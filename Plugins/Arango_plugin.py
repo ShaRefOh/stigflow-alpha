@@ -1,7 +1,7 @@
 
 import time 
 from utils.functions_file import make_valid_key,extract_from_sting 
-from fixie_arango_config import db
+from Plugins.fixie_arango_config import db
 
 #initiate arangoDB client 
 
