@@ -1,48 +1,12 @@
-from dotenv import load_dotenv
-import os
+
 import time 
-from arango import ArangoClient
 from utils.functions_file import make_valid_key,extract_from_sting 
+from fixie_arango_config import db
+
+#initiate arangoDB client 
 
 
-load_dotenv()
 
-'''api_key_id = os.getenv("ARANGO_API_KEY_ID")
-secret_key = os.getenv("ARANGO_API_SECRET_KEY")
-HOST = "https://e1d9e4e87c7e.arangodb.cloud:8529"'''
-password = os.getenv("ARANGO_PASS2")
-
-# Set up the client with your API key
-
-import base64
-
-'''encodedCA = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMrakNDQWVLZ0F3SUJBZ0lSQU5WbkJBNG04MGFac0tXVnhtRVZCZXd3RFFZSktvWklodmNOQVFFTEJRQXcKSmpFUk1BOEdBMVVFQ2hNSVFYSmhibWR2UkVJeEVUQVBCZ05WQkFNVENFRnlZVzVuYjBSQ01CNFhEVEl3TVRFeQpPREUxTURBeU5Wb1hEVEkxTVRFeU56RTFNREF5TlZvd0pqRVJNQThHQTFVRUNoTUlRWEpoYm1kdlJFSXhFVEFQCkJnTlZCQU1UQ0VGeVlXNW5iMFJDTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEKemFRS2JwWnh5SWFMK0YyV1BzU3ZlWStCMlNDVzlPbXpacFMzUmk5a1N3VTUzeWJYeUd4RHRLcXhWZytzTFZIUwo5MzlXSlpDenRNUkFQeCtWRUN3aEF3VEhLNmsvUlJJOTFzMkFnb2ExYUNDS1dhMm9KKzFVSmYyRzZaL01iVzVhCjBVblRzZ250Ukt2T3k1N1l1dFUrRm51V3FuN3plYklNWXFjWVpWWEppcUtBZkw0emhMSEFnN3FlMFFzalo0eVQKVFZSS1N5a0cvdjdOY2EzVmoxNWpqbXJQYWhybjBSZkVaWnJjN1F0K2JPVDhsM3dpdUk0NFJjQ0RTTnRFSzlweAphTjRSOU1LWW45YnNWSDJsQlFuclVBZTMxeXZOb0xSM3pFcnFMZVE2WXZBcHllblorV09ScFEyZXpveFA5eW84ClVsMm9vWkgwRHRYSmttN0hhV1BaYXdJREFRQUJveU13SVRBT0JnTlZIUThCQWY4RUJBTUNBcVF3RHdZRFZSMFQKQVFIL0JBVXdBd0VCL3pBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQXhSOWw2NURZemhkeXE2R2NOd094cGR1UwpZRm44clRWeHpPRlRsRHVyNmgyaHR3emVNVG5YYzRqRmptR2ttS1Jha3dqUWVaN0owRDBwbm54WnBHK2VLN1d0ClVvNEdoMXFYVlNDcDlOdzhrWnRNZ0JGbnB1TmFHVGlDZUZraVMzWk14R2trTUpUYUtqbjBtSGgvbDYxUWZZWW4KOEZTMTFMZHQ3SE5DOGlHQXNWTWtDL0JJQk5pQ29XM0E1WUJtcmROVVVyeVBzdGJQdTZnN3dSOEhrM1RCbmlubAptcWJUMHd5bXVJNkx3YjdlbGF4Z2dIWWlPamg3OXpUaWZJUWEvZjBjRTJFSnBFMkROWGRCbHB3c1dXMTdsOUtDCmVTOVVoYUI1MkFSN2VaU25oaXlsVjFLUkxCeTBZa3RJQ1ZvNzZHckJZZE5Ma1ZseEdGZ3ByRVpQQTdVSWt3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
-try:
-    file_content = base64.b64decode(encodedCA)
-    with open("cert_file.crt", "w+") as f:
-        f.write(file_content.decode("utf-8"))
-except Exception as e:
-    print(str(e))
-    exit(1)'''
-
-client = ArangoClient(
-    hosts="https://8002ef9dab5a.arangodb.cloud:18529", verify_override="cert_file.crt"
-)
-
-db = client.db("stigflow", username="shahar", password=password)
-
-# Note that ArangoGraph Insights Platform runs deployments in a cluster configuration.
-# To achieve the best possible availability, your client application has to handle
-# connection failures by retrying operations if needed.
-print("ArangoDB:", db.version)
-
-testing = db.collection("testing")
-print("fetched collection yes yes")
-for doc in testing:
-    print(doc)
-#testing permissions
-doc = {"identifier":str(time.time())}
-db.collection("testing").insert(doc)
 
 
 #Calculate message score by all or single emoji, and single role. message_id = int/str, role = str, guild = valid str, eomoji ="emoji"
@@ -388,8 +352,11 @@ def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action
         col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
     )
 
-"""upsert_flow(
-    key="notion_tweets",reactions=['🐦'],threshold=2,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
-)"""
+upsert_flow(
+    key="Test",reactions=['🐦'],threshold=1,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
+)
 
+flows = db.collection("StigFlows")
+for f in flows:
+    print(f)
 
