@@ -54,6 +54,7 @@ class FixieHTTPClient(HTTPClient):
 # Get the Fixie URL from the Heroku config vars
 FIXIE_URL = os.getenv('FIXIE_URL')
 password = os.getenv("ARANGO_PASS2")
+username = os.getenv("ARANGO_USERNAME)
 # Define a custom HTTP client class that uses Fixie IPs
 
 
@@ -65,7 +66,7 @@ client = ArangoClient(
     
 )
 
-db = client.db("stigflow", username="shahar", password=password)
+db = client.db("stigflow", username=username, password=password)
 
 
 
