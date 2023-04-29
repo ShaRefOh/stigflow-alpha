@@ -352,9 +352,9 @@ def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action
         col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
     )
 
-upsert_flow(
+"""upsert_flow(
     key="Test",reactions=['🐦'],threshold=1,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
-)
+)"""
 
 """flows = db.collection("StigFlows")
 for f in flows:

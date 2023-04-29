@@ -9,14 +9,7 @@ import re
 from utils.functions_file import isoformat, make_valid_key
 from Plugins.Airtable_plugin import airtable_stig_delete_record,airtable_stig_upsert
 from Plugins.Notion_plugin import NotionIntegration
-#import subprocess
 
-"""# SSH command to create a background SSH connection
-ssh_command = 'ssh -L 8529:localhost:8529 -p 2223 brad@95.175.123.125 -i ~/etc/secrets/id_ed15519_meta'
-
-
-# Run the SSH command in the background
-ssh_process = subprocess.Popen(ssh_command, shell=True)    """
 
 # Load environment variables
 load_dotenv()
