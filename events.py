@@ -68,14 +68,14 @@ async def on_raw_reaction_add(payload):
     "Discord_roles" : {make_valid_key(guild.name):role_names},
     "Discord_handle" : str(member),
     "_key" : make_valid_key(str(member)),
-    "discord_user_id": payload.user_id
+    "discord_user_id": str(payload.user_id)
     }
     
     reaction={
 
     "Maker_doc" : maker,
 
-    "Message_ID" : payload.message_id,
+    "Message_ID" : str(payload.message_id),
     }
 
     if payload.emoji.is_custom_emoji():
@@ -118,14 +118,14 @@ async def on_raw_reaction_remove(payload):
     "Discord_roles" : {make_valid_key(guild.name):role_names},
     "Discord_handle" : str(member),
     "_key" : make_valid_key(str(member)),
-    "discord_user_id": payload.user_id
+    "discord_user_id": str(payload.user_id)
     }
     
    reaction={
 
     "Maker_doc" : maker,
 
-    "Message_ID" : payload.message_id,
+    "Message_ID" : str(payload.message_id),
     }
 
    
@@ -305,7 +305,7 @@ async def build_message_object(payload):
         
 
     message = {
-        "Message_ID": payload.id,
+        "Message_ID": str(payload.id),
         "Author": f"{payload.author.name}#{payload.author.discriminator}",
         "Authorship": isoformat(payload.created_at),
         "Channel" : message_channel,
@@ -319,7 +319,7 @@ async def build_message_object(payload):
         "saved_at":isoformat(datetime.datetime.now()),
         "Discord_roles": {make_valid_key(guild):role_names},
         "Reference" : reference,
-        "discord_user_id" : payload.author.id     
+        "discord_user_id" : str(payload.author.id)     
     }
     #pulling user mentions (not role mentions yet)
     mentions = payload.mentions 

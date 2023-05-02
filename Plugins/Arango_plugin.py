@@ -261,7 +261,7 @@ def upsert_message(message):
     if not result["old"]: 
         #Between author and message
         refEdges = db.collection("refEdges")
-        refEdges.insert({"_from":"makers/"+make_valid_key(message["Author"]),"_to":"messages/"+str(message["Message_ID"]),"creation_time":message["Authorship"],"edgeType":"Authership"})
+        refEdges.insert({"_from":"makers/"+make_valid_key(message["Author"]),"_to":"messages/"+str(message["Message_ID"]),"creation_time":message["Authorship"],"edgeType":"Authorship"})
        
         #Between Guild and Author
         if "Guild" in message.keys():
