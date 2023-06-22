@@ -8,5 +8,12 @@ from Arango_plugin import upsert_flow
 # A flow with status 0 will be ignored, A flow with status 1 is active
 # Choose action from: A_K - airtable, N_K - notion liberary, Q&A - Notion questions and answers
 upsert_flow(
-    key="key",reactions=['🐦'],threshold=1,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
+    key="key",
+    reactions=['🐦'],
+    threshold=1,
+    guild="Common Sense [makers]",
+    channel=["all"],
+    roles=["Maker"],
+    status=0,
+    action='N_T'
 )

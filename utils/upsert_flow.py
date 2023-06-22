@@ -3,7 +3,8 @@ import os
 import time 
 from arango import ArangoClient
 from functions_file import make_valid_key,extract_from_sting 
-from test_ArangoClient import upsert
+from Plugins.Arango_plugin import upsert
+#from test_ArangoClient import upsert
 
 
 load_dotenv()
@@ -38,11 +39,12 @@ db = client.db("stigflow", username="shahar", password=password)
 #print("ArangoDB:")
 
 
-def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action:str,status:int):
+def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,channel:str,action:str,status:int):
     flow = {
         "_key":make_valid_key(str(key)),
         "reactions":reactions,
         "threshold":threshold,
+        "channel":channel,
         "group":{
         "Guild":make_valid_key(guild),
         "roles":roles
@@ -56,6 +58,30 @@ def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action
         col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
     )
 
-'''upsert_flow(
-    key="ReTweet",reactions=['🔁'],threshold=2,guild="Common Sense [makers]",roles=['Maker'],status=1,action="R_T"
-)'''
+upsert_flow(
+    key="TestChannle",channel="bot-testing",reactions=['🔁'],threshold=2,guild="Common Sense [makers]",roles=['Maker'],status=1,action="R_T"
+)
+#A function that goes over all of the documents in the specified collection 'col'
+# and renames a chossen field/attribute 'old_field' as 'new_field'.
+"""def rename_field(old_field:str,new_field,col:str):
+    c = db.collection(col)
+    for doc in c:
+        if old_field in doc.keys():
+            """
+#fix the value of an attrebute for all docs, given an attribute 'att', in a certain collection 'collection_name' 
+# we check if it is 'bad_val' if so, we replace it if 'fixed_val'
+def fix_attribute_to_all(collection_name:str,att:str,bad_val,fixed_val):
+    print('here')
+    col = db.collection(collection_name)
+    for doc in col:
+        
+        if att in doc.keys():
+            
+            if doc[att]==bad_val:
+                
+                doc[att]=fixed_val
+                col.update(doc)
+                print(f'{"doc "}{doc["_id"]}{" was fixed"}')
+                
+
+#fix_attribute_to_all('refEdges','edgeType','Authership','Authorship')

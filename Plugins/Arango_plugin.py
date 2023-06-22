@@ -29,7 +29,7 @@ async def calculate_message_emoji_role_score(message_key,role,emoji,guild):
         
 def count_makers_by_roles(message_key,role,guild):
     print(f"{'argumets, message_key='}{message_key},{'role='}{role},{'guild='}{guild}")
-    aql = "WITH messages, makers FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges FILTER INTERSECTION(@role,v.Discord_roles."+make_valid_key(guild)+") RETURN DISTINCT v._key"
+    aql = "WITH messages, makers FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges FILTER INTERSECTION(@role,v.Discord_roles."+make_valid_key(guild)+") RETURN DISTINCT v.Discord_handle"
     bind_vars={
             
             "message_id":"messages/"+str(message_key),
@@ -50,7 +50,7 @@ def count_makers_by_roles(message_key,role,guild):
 def count_makers_by_emoji(message_key,emoji):
     if emoji == 'all':
         print(f"{'emoji == '}{'all'}")
-        aql = "WITH makers,messages FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges RETURN DISTINCT v._key"
+        aql = "WITH makers,messages FOR v,e,p IN 1..1 INBOUND @message_id reactionEdges RETURN DISTINCT v.Discord_handle"
         bind_vars={
             "message_id":'messages/'+str(message_key),
             }
@@ -325,8 +325,9 @@ async def get_active_flows():
     col = db.collection("StigFlows")
     flows = []
     for doc in col:
-        if doc["Status"] == 1:
-            flows.append(doc)
+        if doc["_key"] != "channelList":
+            if doc["Status"] == 1:
+                flows.append(doc)
     return flows
 """emoji = '📘'
 aql = "FOR e IN reactionEdges FILTER e.Emoji == @emoji RETURN e"
@@ -334,11 +335,12 @@ results = db.aql.execute(aql,bind_vars={"emoji":emoji})
 
 for doc in results:
     print(doc)"""
-def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action:str,status:int):
+def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action:str,status:int,channel:list):
     flow = {
         "_key":make_valid_key(str(key)),
         "reactions":reactions,
         "threshold":threshold,
+        "channel":channel,
         "group":{
         "Guild":make_valid_key(guild),
         "roles":roles
@@ -351,9 +353,26 @@ def upsert_flow(key:str,reactions:list,threshold:int,guild:str,roles:list,action
     upsert(
         col = "StigFlows", search = {"_key":flow["_key"]}, doc = flow, update = flow 
     )
+    update_channel_list()
 
+def update_channel_list():
+    aql = """
+    FOR flow IN StigFlows
+    FILTER flow.Status == 1 RETURN DISTINCT flow.channel
+    """
+    channels = []
+    for l in list(db.aql.execute(aql)):
+        channels = channels + l
+    #print(channels)
+    upsert(
+        col = "StigFlows", search= {"_key":"channelList"}, 
+        doc = {"_key":"channelList","channels":channels}, update= {"channels":channels}
+    )
+    return channels
+#prepare channel list before run to make sure we only pull data from relevant channels
+channel_list = update_channel_list()
 """upsert_flow(
-    key="Test",reactions=['🐦'],threshold=1,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
+    key="TestChannel",reactions=['all'],channel=["bot-testing"],threshold=1,guild="Common Sense [makers]",roles=["Maker"],status=0,action='N_T'
 )"""
 
 """flows = db.collection("StigFlows")

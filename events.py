@@ -4,12 +4,13 @@ import datetime
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from Plugins.Arango_plugin import upsert_reaction, upsert_message, key_in_collection, fetch_message_arango, remove_reaction, get_active_flows, calculate_message_emoji_role_score, fetch_Q_and_A
+from Plugins.Arango_plugin import upsert_reaction, upsert_message, key_in_collection, fetch_message_arango, remove_reaction, get_active_flows, calculate_message_emoji_role_score, fetch_Q_and_A, channel_list
 import re
 from utils.functions_file import isoformat, make_valid_key
 from Plugins.Airtable_plugin import airtable_stig_delete_record,airtable_stig_upsert
-from Plugins.Notion_plugin import NotionIntegration
-
+#from Plugins.Notion_plugin import NotionIntegration
+from Plugins.Scraper1 import scrape
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -20,12 +21,12 @@ client = commands.Bot(command_prefix='./', intents=intents)
 
 
 #Prepere Notion
-try:
+"""try:
     Notion_plugin = NotionIntegration()
 except:
     Exception("Notion API request timed out")
 
-print("here")
+print("here")"""
 
 
 #indicates the bot is ready
@@ -36,13 +37,16 @@ async def on_ready():
 #listen to messages
 @client.event
 async def on_message(payload):
-
     print("on_message detected a new message: ")
     print(payload.id)
 
-    #building a message dict that will be maped into the database
-    message = await build_message_object(payload)
-   
+    #building a message dict that will be mapped into the database
+    try:
+        message = await build_message_object(payload)
+    except ValueError as e:
+        print(e)
+        return
+        
     #Upsert to arango
     upsert_message(message)
     print("on_message upserted the message: ")
@@ -56,7 +60,7 @@ async def on_message(payload):
 @ client.event
 async def on_raw_reaction_add(payload):
     
-    #get maker prophile
+    #get maker profile
     guild = await client.fetch_guild(payload.guild_id)
     member = await guild.fetch_member(payload.user_id)
     
@@ -290,12 +294,16 @@ async def build_message_object(payload):
     - trigger_event: 'add' of 'remove'
     """
   
-   
+    urls = re.findall(r'(https?://(?:www\.)?\S+)|(www\.\S+)', payload.content)
+    extracted_urls = [url[0] if url[0] else url[1] for url in urls]
   
-    extracted_urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+[^. ]', payload.content)
+    #extracted_urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+[^. ]', payload.content)
     #Can add to the next the forum tags
     message_type, message_channel, message_thread_title, reference = await get_message_type_channel_and_ref(payload)
 
+    if message_channel not in channel_list:
+        raise ValueError("message Channel is not allowed")
+        
     #return authors roles
     role_names = []
     for role in payload.author.roles:
@@ -349,9 +357,12 @@ async def build_message_object(payload):
 
 
     
-    #add urls only if there some, other wise we get empty url documents
-    if extracted_urls:
+    #try to add urls and scraped data
+    try:
         message["Extracted_URL"] = extracted_urls
+        message["urlData"]=scrape(extracted_urls[0])
+    except:
+        print("No url or ability to scrape")
     
     
     print(message)
@@ -374,26 +385,39 @@ async def StigLogic(payload,event_type):
         for flow in flows:
             #preper parameters for fo score calculation
             #group = await get_group_ids(flow)
-            print(f"{'cheking logic for flow - '}{flow}")
+            print(f"{'checking logic for flow - '}{flow}")
             #calculate score
+            message = await fetch_message_arango(str(payload.message_id))
+            if message["Channel"] not in flow["channel"] and flow["channel"][0] != "all":
+                print("channel incompatible")
+                break
+            
+            if make_valid_key(message["Guild"]) != flow["group"]["Guild"]:
+                print("guild incompatible")
+                break
             try:
                 print("trying to calculate score")
-                result = await calculate_message_emoji_role_score(message_key=payload.message_id,role= flow["group"]["roles"],guild= flow["group"]["Guild"],emoji= str(flow['reactions'][0]))
-                score = len(result)
+                voters = await calculate_message_emoji_role_score(message_key=payload.message_id,
+                                                                  role= flow["group"]["roles"],
+                                                                  guild= flow["group"]["Guild"],
+                                                                  emoji= str(flow['reactions'][0])                                                                
+                                                                  )
+                print(f"{'list of voters is'}{voters}")
+                score = len(voters)
                 print(f"{'Score '}{score}{' was calculated'}")
                 #check threashold
                 if score>=flow['threshold']:
                     print("Threshold reached")
-                    message = await fetch_message_arango(str(payload.message_id))
                     message["Score"] = score
                     message["StigFlow"] = flow["_key"]
+                    message["voters"]=voters
                     print(f"{'message hase been fetched'}{message['Message_ID']}")
 
-                    await out(flow["action"],message,1)
+                    await out(flow=flow,payload=message,val=1)
                 else:
                     print("Threshold was not reached")
                     print(payload.message_id)
-                    await out(flow["action"],payload.message_id,0)
+                    await out(flow,payload.message_id,0)
             except:
                 print('')
 
@@ -403,9 +427,34 @@ async def StigLogic(payload,event_type):
     
         
 #need to add credentials somewhere            
-async def out(action,payload,val):
-    print('in out')
-    if action == "N_K":
+async def out(flow:dict,payload,val:int):
+    
+    action = flow["action"]
+    
+    if action == "webhook":
+        print("we have a webhook")
+        try: 
+            payload["published"]
+            print("message was already published")
+        except:
+            #I think there is no need to make sure it is a post. Just need to understand the dataschema to handel webhook
+            if payload["Message_type"]== "Post":
+                print("we have a post")
+                target = "https://eowsqfb01t4malm.m.pipedream.net"
+                #add secret to message
+                payload["webhook_secret"] = "1c8SWTbQdOTFOBklYICi3i7x6FlZWi6yGxu7PU"
+                #send message dictionary to the target webhook
+                response = requests.post(target, json=payload)
+
+                # Check the response status code
+                if response.status_code == 200:
+                    print("Success")
+                    payload["published"] = 1
+                    upsert_message(payload)
+                else:
+                    print("Error:", response.status_code)
+
+    """if action == "N_K":
         if val:
 
             print(f"{'Upserting payload '}{payload['Message_ID']}{' to Notion!'}")
@@ -414,8 +463,8 @@ async def out(action,payload,val):
             print(f"{'Removing payload '}{payload}{' to Notion!'}")
             Notion_plugin.remove_notion_page(payload["Message_ID"])
 
-            print("Removed entry from Notion")
-    elif action == "A_K":
+            print("Removed entry from Notion")"""
+    if action == "A_K":
         if val:
             print(f"{'Upserting payload '}{payload['Message_ID']}{' to Airtable!'}")
             airtable_stig_upsert(payload)
@@ -424,7 +473,7 @@ async def out(action,payload,val):
             airtable_stig_delete_record(payload)
 
             print("Removed entry from Notion")
-    elif action == "Q&A":
+    """elif action == "Q&A":
         if val:
             print(f"{'Fertching Q&A from arango '}")
             convo = await fetch_Q_and_A(payload['Message_ID'])
@@ -448,7 +497,7 @@ async def out(action,payload,val):
             print("Removed entry from Notion")
     else:
         print("action is not defined..")
-    return payload
+    return payload"""
 
 #fetch message by message id and channel id
 
